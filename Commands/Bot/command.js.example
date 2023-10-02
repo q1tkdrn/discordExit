@@ -1,0 +1,17 @@
+const config = require('../../config.json')
+const { sendLog } = require('../../struct/sendLog.js');
+
+exports.run = async (client, message, args, prefix) => {
+
+    const outcome = ''
+    sendLog(message, outcome);
+}
+
+
+exports.config = {
+  name: '',
+  aliases: [''],
+  category: [''],
+  des: [''],
+  use: [`${config.prefix}`]
+}
