@@ -2,7 +2,10 @@ const Discord = require('discord.js');
 const { Client, Intents } = require('discord.js');
 
 const config = require('../config.json');
+const env = require('dotenv');
+env.config();
 const token = process.env['TOKEN'];
+console.log(token);
 const prefix = config.prefix;
 const fs = require('fs');
 const keepAlive = require('../server.js');
