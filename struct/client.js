@@ -1,9 +1,9 @@
 const Discord = require('discord.js');
 const { Client, Intents } = require('discord.js');
 
-//const config = require('../config.json');
+const config = require('../config.json');
 const token = process.env['TOKEN'];
-const prefix = "//";
+const prefix = config.prefix;
 const fs = require('fs');
 const keepAlive = require('../server.js');
 
