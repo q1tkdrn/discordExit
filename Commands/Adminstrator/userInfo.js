@@ -24,7 +24,7 @@ exports.run = async (client, message, args, prefix) => {
     message.mentions.users.first() ||
     message.guild.members.cache.get(args[0]);
   if (!user) {
-    const outcome = "해당 우저를 찾을 수 없습니다."
+    const outcome = "해당 유저를 찾을 수 없습니다."
     message.channel.send(outcome);
     sendLog(message, outcome);
     return

@@ -14,7 +14,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
-client.category = ['bot', 'music', 'adminstrator'];
+client.category = ['bot', 'stream','adminstrator'];
 
 fs.readdirSync('./Commands/').forEach(dir => {
   const Filter = fs.readdirSync(`./Commands/${dir}`).filter(f => f.endsWith('.js'));
