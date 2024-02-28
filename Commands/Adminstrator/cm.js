@@ -19,7 +19,7 @@ exports.run = async (client, message, args, prefix) => {
     client.channels.cache.get(args[0]) ||
     message.guild.channels.cache.get(args[0].substring(2).substring(0, 18));
   if (!channel) {
-    const outcome = "해당 유저를 찾을 수 없습니다."
+    const outcome = "해당 채널을 찾을 수 없습니다."
     message.channel.send(outcome);
     sendLog(message, outcome);
     return

@@ -27,7 +27,7 @@ exports.run = async (client, message, args, prefix) => {
             .addField('카테고리', `**${category}**`, true)
             .addField('명령어의 별명', `**${aliases}**`, true);
 
-        message.member.send({ embeds: [Command] });
+        message.reply({ embeds: [Command] });
         return;
     }
 
@@ -50,7 +50,7 @@ exports.run = async (client, message, args, prefix) => {
         );
     }
 
-    message.member.send({ embeds: [Commands] });
+    message.reply({ embeds: [Commands] });
 
     const outcome = JSON.stringify(Commands, null, '\t');
     sendLog(message,outcome);

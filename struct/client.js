@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const { Client, Intents } = require('discord.js');
+const manageNotification = require('../Chzzk/manageNotification.js')
 
+const chzzk = new manageNotification()
 const config = require('../config.json');
 const env = require('dotenv');
 env.config();
@@ -31,6 +33,8 @@ fs.readdirSync('./Commands/').forEach(dir => {
     }
   });
 });
+
+chzzk.run(client)
 
 function runCommand(command, message, args, prefix) {
   const cmd = client.commands.get(command)
