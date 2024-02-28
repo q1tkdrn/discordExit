@@ -57,7 +57,8 @@ class manageNotification {
                             isStream: isStream,
                             coverImage: coverImage,
                             liveTitle: liveTitle,
-                            liveCategoryValue: liveCategoryValue
+                            liveCategoryValue: liveCategoryValue,
+                            chattingChannel: threadChannelId
                         }
                         streamerData.updateField(channelId, jsonData)
                     }
