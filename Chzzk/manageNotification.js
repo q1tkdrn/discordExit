@@ -64,7 +64,7 @@ class manageNotification {
                     }
                 }
             }
-        }, 60000)
+        }, 1000)
     }
 }
 
