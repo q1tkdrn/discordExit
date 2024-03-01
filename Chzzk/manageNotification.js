@@ -28,23 +28,6 @@ class manageNotification {
                         streamerConfig.liveTitle != liveTitle ||
                         streamerConfig.liveCategoryValue != liveCategoryValue) {
                         const threadChannel = client.channels.resolve(threadChannelId)
-                        var name = streamerName
-                        var color = "#f40000"
-                        var status = "방송 꺼짐"
-                        switch (isStream) {
-                            case "OPEN":
-                                color = "#3bca97"
-                                name = `${streamerName} 방송 켜짐(${liveTitle})`
-                                status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
-                                break
-                            case "CLOSE":
-                                color = "#f40000"
-                                name = `${streamerName} 방송 꺼짐(${liveTitle})`
-                                status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
-                                break
-                            default:
-                                break
-                        }
                         const jsonData = {
                             name: streamerName,
                             isStream: isStream,
@@ -54,6 +37,23 @@ class manageNotification {
                             chattingChannel: threadChannelId
                         }
                         streamerData.updateField(channelId, jsonData).then(() => {
+                            var name = streamerName
+                            var color = "#f40000"
+                            var status = "방송 꺼짐"
+                            switch (isStream) {
+                                case "OPEN":
+                                    color = "#3bca97"
+                                    name = `${streamerName} 방송 켜짐(${liveTitle})`
+                                    status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
+                                    break
+                                case "CLOSE":
+                                    color = "#f40000"
+                                    name = `${streamerName} 방송 꺼짐(${liveTitle})`
+                                    status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
+                                    break
+                                default:
+                                    break
+                            }
                             const embed = new MessageEmbed()
                                 .setTitle(`${name}`)
                                 .setURL(`https://chzzk.naver.com/live/${channelId}`)
