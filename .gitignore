@@ -1,6 +1,7 @@
 node_modules
 logs/
 .*
+*.json
 replit.nix
 !config.json
 !.gitignore
