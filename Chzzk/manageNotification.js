@@ -25,7 +25,6 @@ class manageNotification {
                     const threadChannelId = streamerConfig.chattingChannel
                     if (streamerConfig.name != streamerName ||
                         streamerConfig.isStream != isStream ||
-                        streamerConfig.coverImage != coverImage ||
                         streamerConfig.liveTitle != liveTitle ||
                         streamerConfig.liveCategoryValue != liveCategoryValue) {
                         const threadChannel = client.channels.resolve(threadChannelId)
@@ -65,7 +64,7 @@ class manageNotification {
                     }
                 }
             }
-        }, 5000)
+        }, 10000)
     }
 }
 
