@@ -53,18 +53,19 @@ class manageNotification {
                             liveCategoryValue: liveCategoryValue,
                             chattingChannel: threadChannelId
                         }
-                        streamerData.updateField(channelId, jsonData)
-                        const embed = new MessageEmbed()
-                            .setTitle(`${name}`)
-                            .setURL(`https://chzzk.naver.com/live/${channelId}`)
-                            .setColor(color)
-                            .setImage(coverImage)
-                            .addField(`방송 정보`, status)
-                        threadChannel.send({ embeds: [embed] })
+                        streamerData.updateField(channelId, jsonData).then(() => {
+                            const embed = new MessageEmbed()
+                                .setTitle(`${name}`)
+                                .setURL(`https://chzzk.naver.com/live/${channelId}`)
+                                .setColor(color)
+                                .setImage(coverImage)
+                                .addField(`방송 정보`, status)
+                            threadChannel.send({ embeds: [embed] })
+                        })
                     }
                 }
             }
-        }, 10000)
+        }, 5000)
     }
 }
 
