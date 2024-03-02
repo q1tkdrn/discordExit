@@ -23,10 +23,8 @@ class manageNotification {
                                     const liveCategoryValue = liveData.content.liveCategoryValue
                                     const streamerConfig = streamerData[channelId]
                                     const threadChannelId = streamerConfig.chattingChannel
-                                    if (streamerConfig.name != streamerName ||
-                                        streamerConfig.isStream != isStream ||
-                                        streamerConfig.liveTitle != liveTitle ||
-                                        streamerConfig.liveCategoryValue != liveCategoryValue) {
+                                    if (streamerConfig.isStream != isStream ||
+                                        streamerConfig.liveTitle != liveTitle) {
                                         const jsonData = {
                                             name: streamerName,
                                             isStream: isStream,
@@ -72,7 +70,7 @@ class manageNotification {
                 }
 
             })
-        }, 5000)
+        }, 10000)
     }
 }
 
