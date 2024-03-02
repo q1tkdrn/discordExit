@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 
 class JsonManager {
   constructor(filePath) {
@@ -6,65 +6,70 @@ class JsonManager {
   }
 
   fileExists() {
-    try {
-      fs.accessSync(this.filePath);
-      return true;
-    } catch (error) {
-      return false;
-    }
+    return fs.access(this.filePath)
+      .then(() => true)
+      .catch(() => false);
   }
 
   // 파일이 없을 경우 초기 데이터로 새로 생성
-  initializeFile(initialData) {
-    try {
-      const jsonString = JSON.stringify(initialData, null, 2);
-      fs.writeFileSync(this.filePath, jsonString);
-      console.log('File initialized with default data.');
-    } catch (error) {
-      console.error('Error initializing file:', error);
-    }
+  initializeFile(data) {
+    return fs.writeFile(this.filePath, JSON.stringify(data, null, 2), 'utf-8')
+      .catch((error) => {
+        console.error('JSON 파일 쓰기 중 오류 발생:', error);
+        throw error;
+      });
   }
 
   // 파일에서 JSON 데이터 읽기
   readJson() {
-    try {
-      const data = fs.readFileSync(this.filePath, 'utf-8');
-      return JSON.parse(data);
-    } catch (error) {
-      console.error('Error reading JSON file:', error);
-      return null;
-    }
+    return fs.readFile(this.filePath, 'utf-8')
+      .then((data) => {
+        return JSON.parse(data);
+      })
+      .catch((error) => {
+        console.error('JSON 파일 읽기 중 오류 발생:', error);
+        throw error;
+      });
   }
 
   // JSON 데이터 파일에 쓰기
   writeJson(data) {
-    try {
-      const jsonString = JSON.stringify(data, null, 2);
-      fs.writeFileSync(this.filePath, jsonString);
-      console.log('Data saved to JSON file');
-    } catch (error) {
-      console.error('Error writing JSON file:', error);
-    }
+    return fs.writeFile(this.filePath, JSON.stringify(data, null, 2), 'utf-8')
+      .catch((error) => {
+        console.error('JSON 파일 쓰기 중 오류 발생:', error);
+        throw error;
+      });
   }
 
-  // 특정 필드 업데이트
+  // 특정 필드 업데이트 - Promise를 반환하도록 수정
   updateField(fieldName, newValue) {
-    const jsonData = this.readJson();
-    if (jsonData) {
-      jsonData[fieldName] = newValue;
-      this.writeJson(jsonData);
-    }
+    return this.readJson()
+      .then((jsonData) => {
+        if (jsonData) {
+          jsonData[fieldName] = newValue;
+          return this.writeJson(jsonData);
+        } else {
+          throw new Error('필드 업데이트 실패. JSON 데이터를 읽을 수 없습니다.');
+        }
+      })
+      .catch((error) => {
+        throw error;
+      });
   }
-  
+
   removeField(fieldName) {
-    const jsonData = this.readJson();
-    if (jsonData && jsonData.hasOwnProperty(fieldName)) {
-      delete jsonData[fieldName];
-      this.writeJson(jsonData);
-      console.log(`Field '${fieldName}' removed from JSON file.`);
-    } else {
-      console.log(`Field '${fieldName}' not found in JSON file.`);
-    }
+    return this.readJson()
+      .then((jsonData) => {
+        if (jsonData && jsonData.hasOwnProperty(fieldName)) {
+          delete jsonData[fieldName];
+          return this.writeJson(jsonData);
+        } else {
+          console.log(`JSON 파일에서 '${fieldName}' 필드를 찾을 수 없습니다.`);
+        }
+      })
+      .catch((error) => {
+        throw error;
+      });
   }
 }
 
