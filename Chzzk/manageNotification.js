@@ -6,7 +6,7 @@ class manageNotification {
     run(client) {
         setInterval(async () => {
             const jsonManager = new JsonManager('./Data/channel.json')
-            jsonManager.readJson().then((serverData)=> {
+            jsonManager.readJson().then((serverData) => {
                 for (const server in serverData) {
                     const streamerJson = new JsonManager(`./Data/${server}.json`)
                     axios.defaults.headers.common['User-Agent'] = "Whale/3.24.223.21"
@@ -27,7 +27,6 @@ class manageNotification {
                                         streamerConfig.isStream != isStream ||
                                         streamerConfig.liveTitle != liveTitle ||
                                         streamerConfig.liveCategoryValue != liveCategoryValue) {
-                                        const threadChannel = client.channels.resolve(threadChannelId)
                                         const jsonData = {
                                             name: streamerName,
                                             isStream: isStream,
@@ -37,6 +36,9 @@ class manageNotification {
                                             chattingChannel: threadChannelId
                                         }
                                         streamerJson.updateField(channelId, jsonData).then(() => {
+                                            const threadChannel = client.channels.resolve(threadChannelId)
+                                            console.log(threadChannel)
+                                            console.log(threadChannelId)
                                             var name = streamerName
                                             var color = "#f40000"
                                             var status = "방송 꺼짐"
