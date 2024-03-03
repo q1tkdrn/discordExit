@@ -35,8 +35,6 @@ class manageNotification {
                                         }
                                         streamerJson.updateField(channelId, jsonData).then(() => {
                                             const threadChannel = client.channels.resolve(threadChannelId)
-                                            console.log(threadChannel)
-                                            console.log(threadChannelId)
                                             var name = streamerName
                                             var color = "#f40000"
                                             var status = "방송 꺼짐"
@@ -70,7 +68,7 @@ class manageNotification {
                 }
 
             })
-        }, 10000)
+        }, 30000)
     }
 }
 
