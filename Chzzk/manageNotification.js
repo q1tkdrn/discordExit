@@ -1,6 +1,7 @@
 const JsonManager = require('../struct/JsonManager')
 const axios = require('axios')
 const { MessageEmbed } = require('discord.js');
+const { sendLog } = require('../struct/sendLog')
 
 class manageNotification {
     run(client) {
@@ -33,6 +34,8 @@ class manageNotification {
                                             liveCategoryValue: liveCategoryValue,
                                             chattingChannel: threadChannelId
                                         }
+                                        console.log(jsonData)
+                                        console.log(streamerConfig)
                                         streamerJson.updateField(channelId, jsonData).then(() => {
                                             const threadChannel = client.channels.resolve(threadChannelId)
                                             var name = streamerName
