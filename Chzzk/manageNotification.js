@@ -34,34 +34,38 @@ class manageNotification {
                                             liveCategoryValue: liveCategoryValue,
                                             chattingChannel: threadChannelId
                                         }
-                                        console.log(jsonData)
-                                        console.log(streamerConfig)
                                         streamerJson.updateField(channelId, jsonData).then(() => {
                                             const threadChannel = client.channels.resolve(threadChannelId)
                                             var name = streamerName
                                             var color = "#f40000"
                                             var status = "방송 꺼짐"
-                                            switch (isStream) {
-                                                case "OPEN":
-                                                    color = "#3bca97"
-                                                    name = `${streamerName} 방송 켜짐(${liveTitle})`
-                                                    status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
-                                                    break
-                                                case "CLOSE":
-                                                    color = "#f40000"
-                                                    name = `${streamerName} 방송 꺼짐(${liveTitle})`
-                                                    status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
-                                                    break
-                                                default:
-                                                    break
-                                            }
-                                            const embed = new MessageEmbed()
-                                                .setTitle(`${name}`)
-                                                .setURL(`https://chzzk.naver.com/live/${channelId}`)
-                                                .setColor(color)
-                                                .setImage(coverImage)
-                                                .addField(`방송 정보`, status)
-                                            threadChannel.send({ embeds: [embed] })
+                                            var imageUrl = ""
+                                            axios.get(`https://api.chzzk.naver.com/service/v1/search/lives?keyword=${encodeURIComponent(liveTitle)}&size=1`).then((searchResponse) => {
+                                                switch (isStream) {
+                                                    case "OPEN":
+                                                        const thumbnailUrl = searchResponse.data.content.data[0].live.liveImageUrl
+                                                        imageUrl = thumbnailUrl.replace('{type}', '720')
+                                                        color = "#3bca97"
+                                                        name = `${streamerName} 방송 켜짐(${liveTitle})`
+                                                        status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
+                                                        break
+                                                    case "CLOSE":
+                                                        color = "#f40000"
+                                                        name = `${streamerName} 방송 꺼짐(${liveTitle})`
+                                                        status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
+                                                        imageUrl = coverImage
+                                                        break
+                                                    default:
+                                                        break
+                                                }
+                                                const embed = new MessageEmbed()
+                                                    .setTitle(`${name}`)
+                                                    .setURL(`https://chzzk.naver.com/live/${channelId}`)
+                                                    .setColor(color)
+                                                    .setImage(imageUrl)
+                                                    .addField(`방송 정보`, status)
+                                                threadChannel.send({ embeds: [embed] })
+                                            })
                                         })
                                     }
                                 })

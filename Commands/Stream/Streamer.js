@@ -65,47 +65,53 @@ exports.run = async (client, message, args, prefix) => {
                           var name = streamerName
                           var color = "#f40000"
                           var status = "방송 꺼짐"
-                          switch (isStream) {
-                            case "OPEN":
-                              color = "#3bca97"
-                              name = `${streamerName} 방송 켜짐(${liveTitle})`
-                              status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
-                              break
-                            case "CLOSE":
-                              color = "#f40000"
-                              name = `${streamerName} 방송 꺼짐(${liveTitle})`
-                              status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
-                              break
-                            default:
-                              break
-                          }
-                          threadChannelId = threadChannel.id
-                          const embed = new MessageEmbed()
-                            .setTitle(`${name}`)
-                            .setColor(color)
-                            .setImage(coverImage)
-                            .addField(`방송 정보`, status)
-                          threadChannel.send(`<@${message.member.id}>`)
-                            .then((sentMessage) => {
-                              setTimeout(() => {
-                                sentMessage.delete();
-                              }, 1000)
+                          var imageUrl = ""
+                          axios.get(`https://api.chzzk.naver.com/service/v1/search/lives?keyword=${liveTitle}&size=1`).then((searchResponse) => {
+                            switch (isStream) {
+                              case "OPEN":
+                                const thumbnailUrl = searchResponse.data.content.data[0].live.liveImageUrl
+                                imageUrl = thumbnailUrl.replace('{type}', '720')
+                                color = "#3bca97"
+                                name = `${streamerName} 방송 켜짐(${liveTitle})`
+                                status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
+                                break
+                              case "CLOSE":
+                                color = "#f40000"
+                                name = `${streamerName} 방송 꺼짐(${liveTitle})`
+                                status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
+                                imageUrl = coverImage
+                                break
+                              default:
+                                break
+                            }
+                            threadChannelId = threadChannel.id
+                            const embed = new MessageEmbed()
+                              .setTitle(`${name}`)
+                              .setColor(color)
+                              .setImage(imageUrl)
+                              .addField(`방송 정보`, status)
+                            threadChannel.send(`<@${message.member.id}>`)
+                              .then((sentMessage) => {
+                                setTimeout(() => {
+                                  sentMessage.delete();
+                                }, 1000)
+                              })
+                            threadChannel.send({
+                              embeds: [embed],
+                              userName: streamerName,
+                              avatarUrl: coverImage
                             })
-                          threadChannel.send({
-                            embeds: [embed],
-                            userName: streamerName,
-                            avatarUrl: coverImage
+                            const jsonData = {
+                              name: streamerName,
+                              isStream: isStream,
+                              coverImage: coverImage,
+                              liveTitle: liveTitle,
+                              liveCategoryValue: liveCategoryValue,
+                              chattingChannel: threadChannelId
+                            }
+                            jsonManager.updateField(args[1], jsonData)
+                            message.reply(`스트리머 ${streamerName}을 등록했습니다`)
                           })
-                          const jsonData = {
-                            name: streamerName,
-                            isStream: isStream,
-                            coverImage: coverImage,
-                            liveTitle: liveTitle,
-                            liveCategoryValue: liveCategoryValue,
-                            chattingChannel: threadChannelId
-                          }
-                          jsonManager.updateField(args[1], jsonData)
-                          message.reply(`스트리머 ${streamerName}을 등록했습니다`)
                         })
                         .catch(console.error)
                     })
