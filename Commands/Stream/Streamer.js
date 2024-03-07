@@ -66,11 +66,12 @@ exports.run = async (client, message, args, prefix) => {
                           var color = "#f40000"
                           var status = "방송 꺼짐"
                           var imageUrl = ""
-                          axios.get(`https://api.chzzk.naver.com/service/v1/search/lives?keyword=${liveTitle}&size=1`).then((searchResponse) => {
+                          axios.get(`https://api.chzzk.naver.com/service/v1/channels/${channelId}/data?fields=banners,topExposedVideos`).then((searchResponse) => {
                             switch (isStream) {
                               case "OPEN":
-                                const thumbnailUrl = searchResponse.data.content.data[0].live.liveImageUrl
-                                imageUrl = thumbnailUrl.replace('{type}', '720')
+                                const thumbnailUrl = searchResponse.data.content.topExposedVideos.openLive.liveImageUrl
+                                const currentTime = `?date=${Date.now()}`
+                                imageUrl = thumbnailUrl.replace('{type}', '720') + currentTime
                                 color = "#3bca97"
                                 name = `${streamerName} 방송 켜짐(${liveTitle})`
                                 status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
