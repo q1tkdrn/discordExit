@@ -1,7 +1,8 @@
 const JsonManager = require('../struct/JsonManager')
 const axios = require('axios')
 const { MessageEmbed } = require('discord.js');
-const { sendLog } = require('../struct/sendLog')
+const { sendLog } = require('../struct/sendLog');
+const { error } = require('winston');
 
 class manageNotification {
     run(client) {
@@ -67,15 +68,30 @@ class manageNotification {
                                                     .addField(`방송 정보`, status)
                                                 threadChannel.send({ embeds: [embed] })
                                             })
+                                                .catch((error) => {
+                                                    throw error;
+                                                })
                                         })
+                                            .catch((error) => {
+                                                throw error;
+                                            })
                                     }
                                 })
                             })
+                                .catch((error) => {
+                                    throw error;
+                                })
                         }
                     })
+                        .catch((error) => {
+                            throw error;
+                        })
                 }
 
             })
+                .catch((error) => {
+                    throw error;
+                })
         }, 30000)
     }
 }
