@@ -14,6 +14,10 @@ const keepAlive = require('../server.js');
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
+client.once('ready', () => {
+  const channel = client.channels.resolve("1157995526466310164")
+  channel.send("봇이 시작 되었습니다")
+})
 client.commands = new Discord.Collection();
 client.aliases = new Discord.Collection();
 client.category = ['bot', 'stream','adminstrator'];
