@@ -3,5 +3,5 @@ logs/
 .*
 *.json
 replit.nix
-!config.json
+config.json
 !.gitignore

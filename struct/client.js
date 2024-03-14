@@ -47,6 +47,10 @@ function runCommand(command, message, args, prefix) {
   return;
 }
 
+client.on('debug', (message) => {
+  console.log(`[${new Date().toLocaleString()}] [DEBUG] ${message}`)
+})
+
 client.on('message', async message => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
