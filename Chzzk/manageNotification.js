@@ -3,6 +3,9 @@ const axios = require('axios')
 const { MessageEmbed } = require('discord.js');
 const { sendLog } = require('../struct/sendLog');
 const { error } = require('winston');
+const fs = require('fs')
+const https = require('https');
+const Discord = require(`discord.js`)
 
 class manageNotification {
     run(client) {
@@ -25,8 +28,16 @@ class manageNotification {
                                     const liveCategoryValue = liveData.content.liveCategoryValue
                                     const streamerConfig = streamerData[channelId]
                                     const threadChannelId = streamerConfig.chattingChannel
-                                    if (streamerConfig.isStream != isStream ||
-                                        streamerConfig.liveTitle != liveTitle) {
+                                    let case1
+                                    let doUpdate
+                                    if(streamerConfig.isStream != isStream) {
+                                        case1 = 0
+                                        doUpdate = true
+                                    } else if(streamerConfig.liveTitle != liveTitle) {
+                                        case1 = 1
+                                        doUpdate = true
+                                    } else doUpdate = false
+                                    if (doUpdate) {
                                         const jsonData = {
                                             name: streamerName,
                                             isStream: isStream,
@@ -41,17 +52,29 @@ class manageNotification {
                                             var color = "#f40000"
                                             var status = "방송 꺼짐"
                                             var imageUrl = ""
-                                            axios.get(`https://api.chzzk.naver.com/service/v1/channels/${channelId}/data?fields=banners,topExposedVideos`).then((searchResponse) => {
+                                            axios.get(`https://api.chzzk.naver.com/service/v1/channels/${channelId}/data?fields=banners,topExposedVideos`).then(async (searchResponse) => {
                                                 switch (isStream) {
                                                     case "OPEN":
-                                                        const thumbnailUrl = searchResponse.data.content.topExposedVideos.openLive.liveImageUrl
-                                                        const currentTime = `?date=${Date.now()}`
-                                                        imageUrl = thumbnailUrl.replace('{type}', '720') + currentTime
+                                                        if(case1 == 1) {
+                                                            const thumbnailUrl = searchResponse.data.content.topExposedVideos.openLive.liveImageUrl
+                                                            const fileName = `${Date.now()}.jpg`
+
+                                                            await this.downloadImage(thumbnailUrl.replace('{type}', '720'), fileName)
+                                                            imageUrl = `${fileName}`
+                                                            name = `${streamerName} 방제 변경(${liveTitle})`
+                                                        } else {
+                                                            imageUrl = coverImage
+                                                            name = `${streamerName} 방송 켜짐(${liveTitle})`
+                                                        }
                                                         color = "#3bca97"
-                                                        name = `${streamerName} 방송 켜짐(${liveTitle})`
                                                         status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
                                                         break
                                                     case "CLOSE":
+                                                        if(case1 == 1) {
+                                                            name = `${streamerName} 방제 변경(${liveTitle})`
+                                                        } else {
+                                                            name = `${streamerName} 방송 꺼짐(${liveTitle})`
+                                                        }
                                                         color = "#f40000"
                                                         name = `${streamerName} 방송 꺼짐(${liveTitle})`
                                                         status = `방제: ${liveTitle}\n카테고리: ${liveCategoryValue}`
@@ -60,13 +83,30 @@ class manageNotification {
                                                     default:
                                                         break
                                                 }
-                                                const embed = new MessageEmbed()
+                                                if (isStream == "OPEN" && case1 == 1) {
+                                                    const embed = new MessageEmbed()
                                                     .setTitle(`${name}`)
                                                     .setURL(`https://chzzk.naver.com/live/${channelId}`)
                                                     .setColor(color)
-                                                    .setImage(imageUrl)
+                                                    .setImage(`attachment://${imageUrl}`)
                                                     .addField(`방송 정보`, status)
-                                                threadChannel.send({ embeds: [embed] })
+                                                threadChannel.send({ embeds: [embed], files: [`./${imageUrl}`] }).then(() => {
+                                                    fs.unlink(`./${imageUrl}`, (err) => {
+                                                        if (err) {
+                                                            console.error('파일 삭제 실패:', err);
+                                                            return;
+                                                        }
+                                                    })
+                                                })
+                                                } else {
+                                                    const embed = new MessageEmbed()
+                                                        .setTitle(`${name}`)
+                                                        .setURL(`https://chzzk.naver.com/live/${channelId}`)
+                                                        .setColor(color)
+                                                        .setImage(imageUrl)
+                                                        .addField(`방송 정보`, status)
+                                                    threadChannel.send({ embeds: [embed] })
+                                                }
                                             })
                                                 .catch((error) => {
                                                     throw error;
@@ -92,7 +132,28 @@ class manageNotification {
                 .catch((error) => {
                     throw error;
                 })
-        }, 30000)
+        }, 3000)
+    }
+
+    async downloadImage(url, filePath) {
+        const response = await axios({
+            method: 'GET',
+            url: url,
+            responseType: 'stream'
+        });
+
+        // 스트림을 파일로 저장
+        response.data.pipe(fs.createWriteStream(filePath));
+
+        return new Promise((resolve, reject) => {
+            response.data.on('end', () => {
+                resolve();
+            });
+    
+            response.data.on('error', (err) => {
+                reject(err);
+            });
+        });
     }
 }
 
