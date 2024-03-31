@@ -132,7 +132,7 @@ class manageNotification {
                 .catch((error) => {
                     throw error;
                 })
-        }, 3000)
+        }, 30000)
     }
 
     async downloadImage(url, filePath) {
